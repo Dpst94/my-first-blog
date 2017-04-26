@@ -1,5 +1,5 @@
 {% extends 'blog/base.html' %}
-{{ hallo }}
+
 {% block content %}
     {% for post in posts %}
         <div class="post">
@@ -8,6 +8,49 @@
             </div>
             <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
             <p>{{ post.text|linebreaksbr }}</p>
+            <div class=comment-count><a href="{% url 'post_detail' pk=post.pk %}">{{ post.approved_comments.count }} comments</a></div>
         </div>
-    {% endfor %}     
+    {% endfor %} 
+    <!--
+    <div class="pagination">
+        <span class="step-links">
+            {% if posts.has_previous %}
+                <a href="?page={{ posts.previous_page_number }}">previous</a>
+            {% endif %}
+            <span class="current">
+                Page {{ posts.number }} of {{ posts.paginator.num_pages }}            
+            </span>
+
+            {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}">next</a>
+            {% endif %}
+        </span>
+    </div> 
+    -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+
+            {% if posts.number == 1 %}
+                <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+            {% else %}    
+                <li><a href="?page={{ posts.previous_page_number }}" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+            {% endif %}
+
+            {% for page in posts.paginator.page_range %}
+                {% if page == posts.number %}
+                    <li class="active"><span>{{ page }} <span class="sr-only">(current)</span></span></li>
+                {% else %}
+                    <li><a href="?page={{ page }}">{{ page }}</a></li>
+                {% endif %}
+            {% endfor %}
+
+            {% if posts.number == posts.paginator.num_pages %}
+                <li class="disabled"><a href="#" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+            {% else %}    
+                <li><a href="?page={{ posts.next_page_number }}" aria-label="Next"><span aria-hidden="true">&raquo;</span></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+
+
 {% endblock %}           
